@@ -92,7 +92,8 @@ set_target_properties(${EXECUTABLE_NAME} PROPERTIES
 add_custom_command(TARGET ${EXECUTABLE_NAME}
         POST_BUILD
         COMMAND ${CMAKE_SIZE_UTIL} ${EXECUTABLE_FILE_NAME}.out
+        COMMAND ${CMAKE_OBJDUMP} -d ${EXECUTABLE_FILE_NAME}.out > "${EXECUTABLE_FILE_NAME}.asm"
         COMMAND ${CMAKE_OBJCOPY} -O binary ${EXECUTABLE_FILE_NAME}.out "${EXECUTABLE_FILE_NAME}.bin"
         COMMAND ${CMAKE_OBJCOPY} -O ihex ${EXECUTABLE_FILE_NAME}.out "${EXECUTABLE_FILE_NAME}.hex"
-        COMMAND ${CMAKE_NM} ${EXECUTABLE_FILE_NAME}.out | sed -e 's/\\\([0-9a-f]*\\\) . \\\(.*\\\)/\\2 = 0x\\1;/' > "${EXECUTABLE_FILE_NAME}.syms"
+        COMMAND ${CMAKE_NM} ${EXECUTABLE_FILE_NAME}.out | sed -e 's/\\\([0-9a-f]*\\\) . \\\(.*\\\)/\\2 = 0x\\1\;/' | grep -v '^main =' > "${EXECUTABLE_FILE_NAME}.syms"
         COMMENT "post build steps for ${EXECUTABLE_FILE_NAME}")

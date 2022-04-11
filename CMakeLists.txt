@@ -22,3 +22,4 @@ if (NOT NRF5_SDK_PATH)
 endif ()
 
 add_subdirectory(src/base)
+add_subdirectory(src/app)

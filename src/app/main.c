@@ -2,15 +2,15 @@
 #include "nrf_delay.h"
 
 // taken from nRF5 SDK blinky example
-int main(void) {
+int app_main(void) {
 
     /* Configure board. */
     bsp_board_init(BSP_INIT_LEDS);
 
-    /* Toggle LED0. */
+    /* Toggle LED1. */
     while (true)
     {
-        bsp_board_led_invert(0);
+        bsp_board_led_invert(1);
         nrf_delay_ms(500);
     }
 }
