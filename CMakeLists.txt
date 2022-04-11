@@ -21,4 +21,4 @@ if (NOT NRF5_SDK_PATH)
   message(FATAL_ERROR "The path to the NRF52 SDK must be specified on the command line (add -DNRF5_SDK_PATH=<path>")
 endif ()
 
-add_subdirectory(src)
+add_subdirectory(src/base)
