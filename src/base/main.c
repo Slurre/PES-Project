@@ -12,14 +12,10 @@ int main(void) {
     bsp_board_init(BSP_INIT_LEDS);
 
     /* Toggle LED0. */
-    while (false)
+    while (true)
     {
         bsp_board_led_invert(0);
+        app_main();
         nrf_delay_ms(500);
     }
-
-    bsp_board_led_invert(0);
-
-    /* Run app */
-    app_main();
 }
