@@ -5,7 +5,7 @@
 int app_main(void) {
 
     /* Configure board. */
-    bsp_board_init(BSP_INIT_LEDS);
+    //bsp_board_init(BSP_INIT_LEDS);
 
     /* Toggle LED1. */
     while (true)
