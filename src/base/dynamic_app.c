@@ -1,33 +1,30 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include <string.h>
+
 #include <dynamic_app.h>
 
-/*  Searches for and returns the address where the hex EOF record is,
-    starting the search from a given address. */
-void* get_hex_eof_address(void* ad_ptr){
-    uint64_t EOF_record = 0x00000001FF;
-    while((*(uint64_t*)ad_ptr) != EOF_record){
-        ad_ptr = (uint32_t*)ad_ptr + 1; // Cortex M4 uses word aligned addresses
-    }
-    return ad_ptr;
+NRF_FSTORAGE_DEF(nrf_fstorage_t dyn_app_flash) =
+{
+    .evt_handler    = flash_op_callback,
+    .start_addr     = 0x30000,
+    .end_addr       = 0x40000,
+};
+
+//static uint32_t app_buffer[20];
+
+void init_flash(){
+
+    nrf_fstorage_api_t * p_fs_api;
+    //p_fs_api = &nrf_fstorage_nvmc;
+    nrf_fstorage_init(&dyn_app_flash, p_fs_api, NULL);
+
 }
+void relocate_app(){
 
-void relocate_app(app_func *af, void* new_loc){
-    long app_len_bytes;
-    void* app_end = NULL;
-    
-    // find length of app
-    app_end = get_hex_eof_address((void*)af);
-    app_len_bytes = (uint8_t*)*af - (uint8_t*)app_end;
-    
-    // move app to new location
-    memcpy(*af, new_loc, app_len_bytes);
+    uint32_t dummy_data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    nrf_fstorage_write(&dyn_app_flash, NEW_APP_ADDRESS_BASE, &dummy_data, sizeof(dummy_data), NULL);
 
-    // clean the old location
-    memset(*af, 0, app_len_bytes);
 
-    // point func to new location
-    *af = (app_func)new_loc;
+    // Read app code into ram 
 }
 
