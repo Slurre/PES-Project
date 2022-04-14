@@ -17,6 +17,7 @@ add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
 add_dependencies(${EXECUTABLE_NAME} dynamic_code-base)
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES OUTPUT_NAME ${EXECUTABLE_FILE_NAME})
 #target_link_libraries(${EXECUTABLE_NAME} nrf-sdk)
+#set(COMMON_FLAGS ${COMMON_FLAGS} -fPIC -mpic-register=r9 -msingle-pic-base -mno-pic-data-is-text-relative -fPIE)
 target_compile_options(${EXECUTABLE_NAME} PUBLIC
         $<$<AND:$<COMPILE_LANGUAGE:C>,$<CONFIG:DEBUG>>: ${COMMON_FLAGS} -Wextra -Wformat -Wno-missing-field-initializers -Wno-unused-parameter -Og -g3>
         $<$<AND:$<COMPILE_LANGUAGE:C>,$<CONFIG:RELEASE>>: ${COMMON_FLAGS} -Wextra -Wformat -Wno-missing-field-initializers -Wno-unused-parameter -Os>
@@ -34,6 +35,9 @@ set_target_properties(${EXECUTABLE_NAME} PROPERTIES
 
 add_custom_command(TARGET ${EXECUTABLE_NAME}
         POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} --change-addresses 0x30000 ${EXECUTABLE_FILE_NAME}.out "${EXECUTABLE_FILE_NAME}.out"
+        #todo: following line only for testing
+        COMMAND ${CMAKE_OBJDUMP} -d "${CMAKE_BINARY_DIR}/src/app/CMakeFiles/dynamic_code-app.dir/main.c.o" > "main.asm"
         COMMAND ${CMAKE_SIZE_UTIL} ${EXECUTABLE_FILE_NAME}.out
         COMMAND ${CMAKE_OBJDUMP} -d ${EXECUTABLE_FILE_NAME}.out > "${EXECUTABLE_FILE_NAME}.asm"
         COMMAND ${CMAKE_OBJCOPY} -O binary ${EXECUTABLE_FILE_NAME}.out "${EXECUTABLE_FILE_NAME}.bin"
