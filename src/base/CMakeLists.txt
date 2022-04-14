@@ -73,7 +73,9 @@ target_compile_options(nrf-sdk PRIVATE
 set(EXECUTABLE_NAME "dynamic_code-base")
 set(EXECUTABLE_FILE_NAME ${EXECUTABLE_NAME})
 set(NRF5_LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/gcc_nrf52.ld")
+set(SYMBOL_DEF_FILE "${CMAKE_BINARY_DIR}/src/app/dynamic_code-app+stub.syms")
 add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
+add_dependencies(${EXECUTABLE_NAME} dynamic_code-app+stub)
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES OUTPUT_NAME ${EXECUTABLE_FILE_NAME})
 target_link_libraries(${EXECUTABLE_NAME} nrf-sdk)
 target_compile_options(${EXECUTABLE_NAME} PUBLIC
@@ -86,7 +88,8 @@ target_compile_options(${EXECUTABLE_NAME} PUBLIC
 
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
         SUFFIX ".out"
-        LINK_FLAGS "-mthumb -mabi=aapcs -L ${NRF5_SDK_PATH}/modules/nrfx/mdk -T${NRF5_LINKER_SCRIPT} -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Wl,--gc-sections -Wl,--print-memory-usage --specs=nano.specs -lc -lnosys -lm -Wl,-Map=${EXECUTABLE_FILE_NAME}.map"
+        LINK_DEPENDS "${SYMBOL_DEF_FILE}"
+        LINK_FLAGS "-mthumb -mabi=aapcs -L ${NRF5_SDK_PATH}/modules/nrfx/mdk -T${NRF5_LINKER_SCRIPT} -T${SYMBOL_DEF_FILE} -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Wl,--gc-sections -Wl,--print-memory-usage --specs=nano.specs -lc -lnosys -lm -Wl,-Map=${EXECUTABLE_FILE_NAME}.map"
         )
 
 add_custom_command(TARGET ${EXECUTABLE_NAME}

@@ -9,14 +9,14 @@ list(APPEND SOURCE_FILES
 )
 
 # Build app binary (statically linked against symbol definition file)
-set(EXECUTABLE_NAME "dynamic_code-app")
+set(APP_STUB "dynamic_code-app+stub")
+set(APP_REAL "dynamic_code-app")
+set(COMMON_LINK_FLAGS "-mcpu=cortex-m4 -mthumb -mabi=aapcs -mfloat-abi=hard -mfpu=fpv4-sp-d16 -T${CMAKE_SOURCE_DIR}/src/app/app.ld -Wl,--gc-sections -Wl,--print-memory-usage --specs=nano.specs -lc -lnosys -lm")
+
+foreach(EXECUTABLE_NAME IN ITEMS ${APP_STUB} ${APP_REAL})
 set(EXECUTABLE_FILE_NAME ${EXECUTABLE_NAME})
-set(NRF5_LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/gcc_nrf52.ld")
-set(SYMBOL_DEF_FILE "${CMAKE_BINARY_DIR}/src/base/dynamic_code-base.syms")
 add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
-add_dependencies(${EXECUTABLE_NAME} dynamic_code-base)
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES OUTPUT_NAME ${EXECUTABLE_FILE_NAME})
-#target_link_libraries(${EXECUTABLE_NAME} nrf-sdk)
 #set(COMMON_FLAGS ${COMMON_FLAGS} -fPIC -mpic-register=r9 -msingle-pic-base -mno-pic-data-is-text-relative -fPIE)
 target_compile_options(${EXECUTABLE_NAME} PUBLIC
         $<$<AND:$<COMPILE_LANGUAGE:C>,$<CONFIG:DEBUG>>: ${COMMON_FLAGS} -Wextra -Wformat -Wno-missing-field-initializers -Wno-unused-parameter -Og -g3>
@@ -25,14 +25,28 @@ target_compile_options(${EXECUTABLE_NAME} PUBLIC
         $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>: ${COMMON_FLAGS} -Wextra -Wformat -Wno-missing-field-initializers -Wno-unused-parameter -Os -fno-rtti>
         $<$<COMPILE_LANGUAGE:ASM>: -MP -MD -x assembler-with-cpp>
         )
+endforeach()
 
+set(EXECUTABLE_NAME ${APP_STUB})
+set(EXECUTABLE_FILE_NAME ${EXECUTABLE_NAME})
+set_target_properties(${EXECUTABLE_NAME} PROPERTIES
+        SUFFIX ".out"
+        LINK_FLAGS "${COMMON_LINK_FLAGS} -Wl,-Map=${EXECUTABLE_FILE_NAME}.map -Wl,--unresolved-symbols=ignore-all"
+        )
+add_custom_command(TARGET ${EXECUTABLE_NAME}
+        POST_BUILD
+        COMMAND ${CMAKE_NM} --undefined-only ${EXECUTABLE_FILE_NAME}.out | sed -e 's/.* U \\\(.*\\\)/EXTERN\(\\1\);/' > "${EXECUTABLE_FILE_NAME}.syms"
+        COMMENT "post build steps for ${EXECUTABLE_FILE_NAME}")
+
+set(EXECUTABLE_NAME ${APP_REAL})
+set(EXECUTABLE_FILE_NAME ${EXECUTABLE_NAME})
+set(SYMBOL_DEF_FILE "${CMAKE_BINARY_DIR}/src/base/dynamic_code-base.syms")
+add_dependencies(${EXECUTABLE_NAME} dynamic_code-base)
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
         SUFFIX ".out"
         LINK_DEPENDS "${SYMBOL_DEF_FILE}"
-        #LINK_FLAGS "-mthumb -mabi=aapcs -L ${NRF5_SDK_PATH}/modules/nrfx/mdk -T${NRF5_LINKER_SCRIPT} -T${CMAKE_BINARY_DIR}/src/base/dynamic_code-base.syms -fPIE -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Wl,--gc-sections -Wl,--print-memory-usage --specs=nano.specs -lc -lnosys -lm -Wl,-Map=${EXECUTABLE_FILE_NAME}.map"
-        LINK_FLAGS "-mthumb -mabi=aapcs -T${CMAKE_SOURCE_DIR}/src/app/app.ld -Wl,-R${SYMBOL_DEF_FILE} -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Wl,--gc-sections -Wl,--print-memory-usage --specs=nano.specs -lc -lnosys -lm -Wl,-Map=${EXECUTABLE_FILE_NAME}.map"
+        LINK_FLAGS "${COMMON_LINK_FLAGS} -Wl,-Map=${EXECUTABLE_FILE_NAME}.map -Wl,-R${SYMBOL_DEF_FILE}"
         )
-
 add_custom_command(TARGET ${EXECUTABLE_NAME}
         POST_BUILD
         COMMAND ${CMAKE_OBJCOPY} --change-addresses 0x30000 ${EXECUTABLE_FILE_NAME}.out "${EXECUTABLE_FILE_NAME}.out"
