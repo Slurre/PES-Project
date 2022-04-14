@@ -49,11 +49,13 @@ set_target_properties(${EXECUTABLE_NAME} PROPERTIES
         )
 add_custom_command(TARGET ${EXECUTABLE_NAME}
         POST_BUILD
+        COMMAND cp ${EXECUTABLE_FILE_NAME}.out ${EXECUTABLE_FILE_NAME}.out.old
         COMMAND ${CMAKE_OBJCOPY} --change-addresses 0x30000 ${EXECUTABLE_FILE_NAME}.out "${EXECUTABLE_FILE_NAME}.out"
         #todo: following line only for testing
         COMMAND ${CMAKE_OBJDUMP} -d "${CMAKE_BINARY_DIR}/src/app/CMakeFiles/dynamic_code-app.dir/main.c.o" > "main.asm"
         COMMAND ${CMAKE_SIZE_UTIL} ${EXECUTABLE_FILE_NAME}.out
-        COMMAND ${CMAKE_OBJDUMP} -d ${EXECUTABLE_FILE_NAME}.out > "${EXECUTABLE_FILE_NAME}.asm"
+        COMMAND ${CMAKE_OBJDUMP} -D ${EXECUTABLE_FILE_NAME}.out > "${EXECUTABLE_FILE_NAME}.asm"
+        COMMAND ${CMAKE_OBJDUMP} -D ${EXECUTABLE_FILE_NAME}.out.old > "${EXECUTABLE_FILE_NAME}.asm.old"
         COMMAND ${CMAKE_OBJCOPY} -O binary ${EXECUTABLE_FILE_NAME}.out "${EXECUTABLE_FILE_NAME}.bin"
         COMMAND ${CMAKE_OBJCOPY} -O ihex ${EXECUTABLE_FILE_NAME}.out "${EXECUTABLE_FILE_NAME}.hex"
         COMMAND ${CMAKE_NM} ${EXECUTABLE_FILE_NAME}.out | sed -e 's/\\\([0-9a-f]*\\\) . \\\(.*\\\)/\\2 = 0x\\1;/' > "${EXECUTABLE_FILE_NAME}.syms"
