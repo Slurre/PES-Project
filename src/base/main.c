@@ -7,6 +7,8 @@ int main(void) {
 
     app_func app_main = (app_func)0x30001; // address defined in app.ld + 1 ("thumb bit")
 
+    init_flash();
+    
     // move app
     relocate_app(&app_main, (void*)0x30010);
   

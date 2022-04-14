@@ -8,8 +8,7 @@
 #include "boards.h"
 #include "app_timer.h"
 #include "app_util.h"
-#include "nrf_fstorage.h"
-
+#include "nrf_drv_clock.h"
 #include "nrf_fstorage.h"
 #include "nrf_fstorage_nvmc.h"
 
@@ -20,5 +19,5 @@ typedef int (*app_func)(void);
 
 void init_flash();
 void relocate_app();
-void flash_op_callback(nrf_fstorage_evt_t * p_evt);
+
 
