@@ -35,6 +35,8 @@ set(SDK_SOURCE_FILES
         "${NRF5_SDK_PATH}/components/libraries/memobj/nrf_memobj.c"
         "${NRF5_SDK_PATH}/components/libraries/ringbuf/nrf_ringbuf.c"
         "${NRF5_SDK_PATH}/components/libraries/strerror/nrf_strerror.c"
+        "${NRF5_SDK_PATH}/components/libraries/fstorage/nrf_fstorage.c"
+        "${NRF5_SDK_PATH}/components/libraries/fstorage/nrf_fstorage_nvmc.c"
 
         # Segger RTT
         "${NRF5_SDK_PATH}/external/segger_rtt/SEGGER_RTT_Syscalls_GCC.c"
@@ -45,6 +47,7 @@ set(SDK_SOURCE_FILES
         "${NRF5_SDK_PATH}/external/utf_converter/utf.c"
         "${NRF5_SDK_PATH}/external/fprintf/nrf_fprintf.c"
         "${NRF5_SDK_PATH}/external/fprintf/nrf_fprintf_format.c"
+        "${NRF5_SDK_PATH}/modules/nrfx/hal/nrf_nvmc.c"
 
         # TWI
         "${NRF5_SDK_PATH}/modules/nrfx/drivers/src/nrfx_twim.c"
