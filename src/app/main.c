@@ -14,7 +14,21 @@ void blink_leds(void) {
         bsp_board_led_invert(i);
 }
 
+void blink_leds_delay(void) {
+    /* Toggle all LEDs. */
+    bsp_board_leds_on();
+    nrf_delay_ms(500);
+    bsp_board_leds_off();
+}
+
+void blink_leds_static(void) {
+    /* Toggle all LEDs. */
+    static uint8_t state = 0;
+    state = !state;
+    state ? bsp_board_leds_on() : bsp_board_leds_off();
+}
+
 int app_main(void) {
-    blink_leds();
+    blink_leds_delay();
     return 0;
 }
