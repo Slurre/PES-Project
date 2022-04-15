@@ -13,7 +13,7 @@
 #include "nrf_fstorage_nvmc.h"
 
 #define DEFAULT_APP_ADR         0x30000
-#define MAX_APP_SIZE_BYTES      64
+#define MAX_APP_SIZE_BYTES      256
 #define APP_RELOC_BASE_ADR      (DEFAULT_APP_ADR + MAX_APP_SIZE_BYTES) 
 
 #define APP_METADATA_BASE_ADR   0x40000

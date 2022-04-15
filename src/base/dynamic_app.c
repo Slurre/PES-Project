@@ -44,7 +44,7 @@ int is_app_reloc_complete(){
 /* Returns the length of newly flashed app (in bytes) */
 // TODO: Adapt for varying app length
 int get_app_length(){
-    return 16;
+    return MAX_APP_SIZE_BYTES;
 }
 
 /* */

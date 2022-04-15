@@ -5,7 +5,7 @@
 // taken from nRF5 SDK blinky example
 int main(void) {
 
-    app_func app_main = (app_func)0x30041; // address defined in app.ld + 1 ("thumb bit")
+    app_func app_main = (app_func)0x30101; // address defined in app.ld + 1 ("thumb bit")
 
     init_flash();
 
