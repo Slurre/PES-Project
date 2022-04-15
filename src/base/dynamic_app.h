@@ -12,8 +12,9 @@
 #include "nrf_fstorage.h"
 #include "nrf_fstorage_nvmc.h"
 
-#define DEFAULT_APP_ADDRESS 0x30000
-#define NEW_APP_ADDRESS_BASE 0x30010 
+#define DEFAULT_APP_ADR         0x30000
+#define MAX_APP_SIZE_BYTES      1024
+#define APP_RELOC_BASE_ADR      (DEFAULT_APP_ADR + MAX_APP_SIZE_BYTES) 
 
 typedef int (*app_func)(void);
 
