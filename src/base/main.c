@@ -11,8 +11,6 @@ int main(void) {
 
     // move app and wait for completion
     relocate_app();
-
-    init_flash();
     
     /* Configure board. */
     bsp_board_init(BSP_INIT_LEDS);

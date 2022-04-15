@@ -27,6 +27,12 @@ void init_flash(){
     nrf_fstorage_init(&dyn_app_flash, p_fs_api, NULL);
 }
 
+void wait_for_flash_ready(nrf_fstorage_t const * p_fstorage)
+{
+    /* While fstorage is busy, sleep and wait for an event. */
+    while (nrf_fstorage_is_busy(p_fstorage)){};
+}
+
 /* Returns a function pointer to the relocated app */
 // TODO: Only supports one app right now
 app_func get_addr_of_app(){
@@ -48,42 +54,50 @@ int get_app_length(){
 }
 
 /* */
+static uint8_t app_buffer[MAX_APP_SIZE_BYTES] = {0};
+static int app_length_bytes = 0;
+static uint8_t randombs[10] = {3};
 void relocate_app(){
-    uint8_t app_buffer[MAX_APP_SIZE_BYTES] = {0};
-    int app_length_bytes = 0;
-    
     
     // TODO: Verify that new app exists
     
     
+    ret_code_t rc;
+
     // Read app code into ram 
     app_length_bytes = get_app_length(); 
-    nrf_fstorage_read(
+    rc = nrf_fstorage_read(
         &dyn_app_flash, 
         DEFAULT_APP_ADR, 
         &app_buffer[0], 
         app_length_bytes
     );
+    APP_ERROR_CHECK(rc);
+
+    wait_for_flash_ready(&dyn_app_flash);
 
     // Write to new location
-    nrf_fstorage_write(
+    rc=nrf_fstorage_write(
         &dyn_app_flash, 
         APP_RELOC_BASE_ADR, 
         &app_buffer[0], 
         app_length_bytes,
         NULL
     );
+    APP_ERROR_CHECK(rc);
+    wait_for_flash_ready(&dyn_app_flash);
 
     // Clean up old location (re-use app buffer for clearing)
-    /*
-    for(int i=0; i<MAX_APP_SIZE_BYTES; i++){app_buffer[i]=0xAA;}
-    nrf_fstorage_write(
+    for(int i=0; i<MAX_APP_SIZE_BYTES; i++){app_buffer[i]=0xFF;}
+    rc=nrf_fstorage_write(
         &dyn_app_flash, 
         DEFAULT_APP_ADR, 
-        &app_buffer[0], 
-        app_length_bytes,
+        &randombs[0], 
+        10,
         NULL
-    );*/
+    );
+    APP_ERROR_CHECK(rc);
+    wait_for_flash_ready(&dyn_app_flash);
 
     // TODO: Move when supporting multiple apps
     app_reloc_complete = 1;
