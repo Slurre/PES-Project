@@ -5,8 +5,11 @@
 
 static void flash_op_callback(nrf_fstorage_evt_t * p_evt){};
 
+<<<<<<< HEAD
 // Flag set after all app relocation is complete
 static int app_reloc_complete = 0;
+=======
+>>>>>>> fbb8d7c4ed3311138e806e97dbe66196970bc9dc
 
 /* 
 Flash handler must be allowed to read new app and write to 
@@ -27,6 +30,7 @@ void init_flash(){
     nrf_fstorage_init(&dyn_app_flash, p_fs_api, NULL);
 }
 
+<<<<<<< HEAD
 /* Returns a function pointer to the relocated app */
 // TODO: Only supports one app right now
 app_func get_addr_of_app(){
@@ -39,12 +43,20 @@ app_func get_addr_of_app(){
 
 int is_app_reloc_complete(){
     return app_reloc_complete != 0; 
+=======
+app_func get_addr_of_app(){
+    return APP_RELOC_BASE_ADR;
+>>>>>>> fbb8d7c4ed3311138e806e97dbe66196970bc9dc
 }
 
 /* Returns the length of newly flashed app (in bytes) */
 // TODO: Adapt for varying app length
 int get_app_length(){
+<<<<<<< HEAD
     return MAX_APP_SIZE_BYTES;
+=======
+    return 16;
+>>>>>>> fbb8d7c4ed3311138e806e97dbe66196970bc9dc
 }
 
 /* */
@@ -75,17 +87,25 @@ void relocate_app(){
     );
 
     // Clean up old location (re-use app buffer for clearing)
+<<<<<<< HEAD
     /*
     for(int i=0; i<MAX_APP_SIZE_BYTES; i++){app_buffer[i]=0xAA;}
+=======
+    for(int i=0; i<MAX_APP_SIZE_BYTES; i++){app_buffer[i]=0;}
+>>>>>>> fbb8d7c4ed3311138e806e97dbe66196970bc9dc
     nrf_fstorage_write(
         &dyn_app_flash, 
         DEFAULT_APP_ADR, 
         &app_buffer[0], 
         app_length_bytes,
         NULL
+<<<<<<< HEAD
     );*/
 
     // TODO: Move when supporting multiple apps
     app_reloc_complete = 1;
+=======
+    );
+>>>>>>> fbb8d7c4ed3311138e806e97dbe66196970bc9dc
 }
 
