@@ -28,7 +28,16 @@ void blink_leds_static(void) {
     state ? bsp_board_leds_on() : bsp_board_leds_off();
 }
 
+void blink_leds_static_two(void) {
+    /* Toggle all LEDs. */
+    static uint8_t state = 0;
+    static uint8_t next_state = 1;
+    state = next_state;
+    state ? bsp_board_leds_on() : bsp_board_leds_off();
+    next_state = !state;
+}
+
 int app_main(void) {
-    blink_leds_delay();
+    blink_leds_static_two();
     return 0;
 }
