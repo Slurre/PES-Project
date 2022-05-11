@@ -5,7 +5,7 @@ project(dynamic_code-app C CXX ASM)
 include(../common.cmake)
 
 list(APPEND SOURCE_FILES
-        main.c
+        main.cpp
 )
 
 # Build app binary (statically linked against symbol definition file)
@@ -51,7 +51,7 @@ add_custom_command(TARGET ${EXECUTABLE_NAME}
         POST_BUILD
         COMMAND ${CMAKE_OBJCOPY} --change-addresses 0x30000 ${EXECUTABLE_FILE_NAME}.out "${EXECUTABLE_FILE_NAME}.out"
         #todo: following line only for testing
-        COMMAND ${CMAKE_OBJDUMP} -d "${CMAKE_BINARY_DIR}/src/app/CMakeFiles/dynamic_code-app.dir/main.c.o" > "main.asm"
+        COMMAND ${CMAKE_OBJDUMP} -d "${CMAKE_BINARY_DIR}/src/app/CMakeFiles/dynamic_code-app.dir/main.cpp.o" > "main.asm"
         COMMAND ${CMAKE_SIZE_UTIL} ${EXECUTABLE_FILE_NAME}.out
         COMMAND ${CMAKE_OBJDUMP} -d ${EXECUTABLE_FILE_NAME}.out > "${EXECUTABLE_FILE_NAME}.asm"
         COMMAND ${CMAKE_OBJCOPY} -O binary ${EXECUTABLE_FILE_NAME}.out "${EXECUTABLE_FILE_NAME}.bin"
