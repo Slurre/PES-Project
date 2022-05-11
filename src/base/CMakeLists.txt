@@ -35,6 +35,8 @@ set(SDK_SOURCE_FILES
         "${NRF5_SDK_PATH}/components/libraries/memobj/nrf_memobj.c"
         "${NRF5_SDK_PATH}/components/libraries/ringbuf/nrf_ringbuf.c"
         "${NRF5_SDK_PATH}/components/libraries/strerror/nrf_strerror.c"
+        "${NRF5_SDK_PATH}/components/libraries/fstorage/nrf_fstorage.c"
+        "${NRF5_SDK_PATH}/components/libraries/fstorage/nrf_fstorage_nvmc.c"
 
         # Segger RTT
         "${NRF5_SDK_PATH}/external/segger_rtt/SEGGER_RTT_Syscalls_GCC.c"
@@ -45,6 +47,7 @@ set(SDK_SOURCE_FILES
         "${NRF5_SDK_PATH}/external/utf_converter/utf.c"
         "${NRF5_SDK_PATH}/external/fprintf/nrf_fprintf.c"
         "${NRF5_SDK_PATH}/external/fprintf/nrf_fprintf_format.c"
+        "${NRF5_SDK_PATH}/modules/nrfx/hal/nrf_nvmc.c"
 
         # TWI
         "${NRF5_SDK_PATH}/modules/nrfx/drivers/src/nrfx_twim.c"
@@ -55,6 +58,7 @@ set(SDK_SOURCE_FILES
 
 list(APPEND SOURCE_FILES
         main.cpp
+        dynamic_app.cpp
 )
 
 # NRF SDK
@@ -98,5 +102,5 @@ add_custom_command(TARGET ${EXECUTABLE_NAME}
         COMMAND ${CMAKE_OBJDUMP} -d ${EXECUTABLE_FILE_NAME}.out > "${EXECUTABLE_FILE_NAME}.asm"
         COMMAND ${CMAKE_OBJCOPY} -O binary ${EXECUTABLE_FILE_NAME}.out "${EXECUTABLE_FILE_NAME}.bin"
         COMMAND ${CMAKE_OBJCOPY} -O ihex ${EXECUTABLE_FILE_NAME}.out "${EXECUTABLE_FILE_NAME}.hex"
-        COMMAND ${CMAKE_NM} ${EXECUTABLE_FILE_NAME}.out | sed -e 's/\\\([0-9a-f]*\\\) . \\\(.*\\\)/\\2 = 0x\\1\;/' | grep -vE '^main =\| U ' > "${EXECUTABLE_FILE_NAME}.syms" # \| U 
+        COMMAND ${CMAKE_NM} ${EXECUTABLE_FILE_NAME}.out | sed -e 's/\\\([0-9a-f]*\\\) . \\\(.*\\\)/\\2 = 0x\\1\;/' | grep -vE '^main =| U ' > "${EXECUTABLE_FILE_NAME}.syms"
         COMMENT "post build steps for ${EXECUTABLE_FILE_NAME}")
