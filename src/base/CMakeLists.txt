@@ -58,7 +58,7 @@ set(SDK_SOURCE_FILES
 
 list(APPEND SOURCE_FILES
         main.cpp
-        dynamic_app.cpp
+        dynamic_app.c
 )
 
 # NRF SDK
