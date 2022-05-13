@@ -1,6 +1,7 @@
 #include "boards.h"
 #include "nrf_delay.h"
 #include "dynamic_app.h"
+#include <vector>
 
 // taken from nRF5 SDK blinky example
 int main(void) {
@@ -11,9 +12,15 @@ int main(void) {
 
     // move app and wait for completion
     relocate_app();
-    
+
     /* Configure board. */
     bsp_board_init(BSP_INIT_LEDS);
+
+    // std::vector<uint8_t> leds_to_blink;
+    // leds_to_blink.push_back(1);
+    // leds_to_blink.push_back(1);
+    // leds_to_blink.push_back(1);
+    // leds_to_blink.push_back(1);
 
     /* Call app every 500ms. */
     while (true)
@@ -22,4 +29,3 @@ int main(void) {
         nrf_delay_ms(500);
     }
 }
-
