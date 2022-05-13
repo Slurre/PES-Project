@@ -6,6 +6,7 @@ include(../common.cmake)
 
 list(APPEND SOURCE_FILES
         main.cpp
+        infini_app.cpp
 )
 
 # Build app binary (statically linked against symbol definition file)
