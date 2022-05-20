@@ -37,7 +37,13 @@ void blink_leds_static_two(void) {
     next_state = !state;
 }
 
+uint8_t state = 0;
+void blink_leds_global(void) {
+    state = !state;
+    state ? bsp_board_leds_on() : bsp_board_leds_off();
+}
+
 int app_main(void) {
-    blink_leds_static_two();
+    blink_leds_global();
     return 0;
 }
